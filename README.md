@@ -18,5 +18,6 @@ El contenido está organizado cronológica y temáticamente de la siguiente mane
 
 ```text
 ├── 01_Talleres/          # Ejercicios prácticos y tareas semanales
-├── 02_Proyectos/      # Soluciones de ML para cada proyecto
-└── 03_Parciales/         # Desarrollo de evaluaciones y parciales
+├── 02_Proyectos/         # Soluciones de ML para cada proyecto
+├── 03_Parciales/         # Desarrollo de evaluaciones y parciales
+└── data/                 # Datasets usados para cada trabajo en el repositorio
