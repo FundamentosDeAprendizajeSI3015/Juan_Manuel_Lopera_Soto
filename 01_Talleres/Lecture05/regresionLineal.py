@@ -101,7 +101,7 @@ ax.set_title('Ridge: Valor Real vs Predicho')
 ax.legend()
 plt.tight_layout()
 plt.savefig(os.path.join(output_dir, 'ridge_real_vs_predicho.png'))
-plt.close() # Cierra la gráfica para que no se muestre en pantalla
+plt.close()
 
 # Gráfica LASSO
 fig, ax = plt.subplots(figsize=(8, 6))
