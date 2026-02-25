@@ -12,7 +12,7 @@ El objetivo principal de esta etapa es diseñar flujos de trabajo (pipelines) de
 
 ### 1. Recopilación y Carga Inicial
 * **Dataset FIFA 23 (`FIFA23Data.csv`):** Selección de características numéricas clave para el rendimiento deportivo (`Age`, `Overall`, `Potential`, `Pace Total`, `Shooting Total`, etc.) y definición de la variable objetivo continua (`Value(in Euro)`).
-* **Dataset Médico (`data.csv`):** Carga de datos clínicos (edad, colesterol, presión arterial, etc.). Se realizó una limpieza profunda reemplazando caracteres nulos (`?`) por `NaN` y eliminando registros incompletos.
+* **Dataset Médico (`HeartDiseaseData.csv`):** Carga de datos clínicos (edad, colesterol, presión arterial, etc.). Se realizó una limpieza profunda reemplazando caracteres nulos (`?`) por `NaN` y eliminando registros incompletos.
 * **Binarización del Target:** Para el caso médico, la variable predictiva continua (`num`) se transformó en un formato binario estructurado (0 = Sano, >0 = Enfermo) para habilitar la clasificación algorítmica.
 
 ### 2. Preprocesamiento y Transformación de Datos
