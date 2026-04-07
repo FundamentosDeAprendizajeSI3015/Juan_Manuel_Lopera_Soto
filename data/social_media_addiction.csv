@@ -3,7 +3,7 @@ User_ID,Age,Gender,Platform,Daily_Usage_Time_min,Posts_Per_Day,Likes_Received_Da
 1002,19,Male,TikTok,210,1,45,5,10,85,Severe,Depressed,9,30,9
 1003,28,Female,LinkedIn,45,0,5,2,15,10,Low,Motivated,2,80,3
 1004,35,Male,Facebook,90,2,30,10,20,25,Moderate,Neutral,4,65,5
-1005,21,Non-binary,Twitter,180,15,200,60,50,55,High,Stressed,8,40,7
+1005,21,Non-binary,Twitter,180,15,200,60,50,55,High,Stre1ssed,8,40,7
 1006,25,Male,YouTube,240,0,10,1,0,10,Severe,Bored,9,35,4
 1007,31,Female,Instagram,60,1,50,8,30,20,Moderate,Happy,3,75,4
 1008,22,Male,TikTok,165,5,90,12,35,70,High,Envious,6,50,8

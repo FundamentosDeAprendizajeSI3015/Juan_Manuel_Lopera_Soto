@@ -1,75 +1,71 @@
-# Detector de Doomscrolling Basado en Datos de Telemetria
+# 🧠 Doomscrolling Detector: Inferencia de Estado Emocional mediante Telemetría
 
-## Descripción del Proyecto
+![Python](https://img.shields.io/badge/Python-3.8%2B-blue?logo=python)
+![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-Machine_Learning-orange?logo=scikit-learn)
+![Pandas](https://img.shields.io/badge/Pandas-Data_Processing-150458?logo=pandas)
+![Status](https://img.shields.io/badge/Status-Completed-success)
 
-Este proyecto aborda una problemática crítica en la era digital: el impacto silencioso de las redes sociales en la salud mental. En lugar de predecir métricas de negocio (clicks o tiempo de retención), este sistema actúa como un **Motor de Inferencia de Bienestar Digital**.
-
-El objetivo es desarrollar un modelo de Machine Learning capaz de predecir el **Estado Emocional Post-Uso** (`Emotional_State_Post_Usage`) de un usuario, basándose exclusivamente en métricas de comportamiento cinético y patrones de consumo (scroll, tiempo, interacciones) en tiempo real, sin depender de encuestas ni diagnósticos médicos previos.
-
-## Descripción del Dataset
-
-El conjunto de datos contiene 2,500 registros de comportamiento de usuarios en diversas plataformas (TikTok, Instagram, LinkedIn, etc.).
-
-### Variables de Entrada (Features)
-Estas variables representan la "huella digital" del comportamiento:
-* `Daily_Usage_Time_min`: Tiempo total de uso (minutos).
-* `Scroll_Rate_ppm`: Velocidad de desplazamiento (píxeles por minuto). Indicador clave de ansiedad/compulsión.
-* `Interactions`: Likes, Comentarios, Posts, Mensajes enviados.
-* `Platform`: Red social utilizada.
-* `Demographics`: Edad y Género.
-
-### Variable Objetivo (Target)
-* `Emotional_State_Post_Usage`: Variable categórica multiclase (ej: *Happy, Neutral, Anxious, Sad, Angry*).
-
-### Prevención de Data Leakage
-Para garantizar la validez del modelo en un entorno productivo real, se eliminaron deliberadamente las siguientes columnas durante el pre-procesamiento, ya que constituyen "fugas de información" (información que no tendríamos en tiempo real o que es consecuencia directa del target):
-* `Addiction_Level` (Diagnóstico realizado posteriormente, no es en tiempo real).
-* `Mental_Health_Index` (Puntaje clínico).
-* `Productivity_Loss_Score`.
-
-## Ingeniería de Datos y Pipeline
-
-El proyecto implementa un pipeline robusto de pre-procesamiento:
-
-1.  **Limpieza de Datos:**
-    * Imputación de valores nulos (Media para numéricos, Moda para categóricos).
-    * Filtrado lógico (eliminación de tiempos de uso > 24h).
-2.  **Transformaciones Matemáticas:**
-    * **Log Transformation:** Aplicada a `Daily_Usage_Time_min` para corregir el sesgo positivo (cola larga) y normalizar la distribución de usuarios extremos ("Power Users").
-3.  **Encoding:**
-    * **One-Hot Encoding:** Para la variable `Platform`, permitiendo al modelo tratar cada red social equitativamente sin imponer un orden numérico falso.
-    * **Label Encoding:** Para la variable objetivo.
-4.  **Escalado:**
-    * Uso de `StandardScaler` para normalizar características numéricas (`Age`, `Scroll_Rate`), crucial para algoritmos basados en distancias o gradientes.
-
-## Visualización y Análisis Exploratorio (EDA)
-
-Durante la exploración se identificaron patrones clave:
-* **El "Efecto TikTok":** Se observó una correlación directa entre plataformas de video corto y un `Scroll_Rate_ppm` elevado.
-* **Distribución de Uso:** La transformación logarítmica fue necesaria para estabilizar la varianza en los datos de tiempo de uso.
-
-## Modelado (Estrategia Propuesta)
-
-El proyecto está diseñado para evaluar y comparar los siguientes enfoques:
-* **Baseline:** Regresión Logística Multinomial.
-* **Modelo Avanzado:** Gradient Boosting (CatBoost o LightGBM), elegidos por su capacidad superior para manejar variables categóricas y relaciones no lineales en datos tabulares.
-
-**Métrica de Evaluación:** `F1-Score (Macro)`, priorizando el equilibrio entre Precision y Recall para no ignorar las clases minoritarias de riesgo (ej: Depresión severa).
-
-## Requisitos e Instalación
-
-1.  Clonar el repositorio:
-    ```bash
-    git clone [https://github.com/tu-usuario/doomscrolling-detector.git](https://github.com/tu-usuario/doomscrolling-detector.git)
-    ```
-2.  Instalar dependencias:
-    ```bash
-    pip install pandas numpy seaborn matplotlib scikit-learn
-    ```
-3.  Ejecutar el pipeline de limpieza:
-    ```bash
-    python src/data_pipeline.py
-    ```
+## 🎓 Información Académica
+* **Institución:** Universidad EAFIT
+* **Curso:** Fundamentos de Aprendizaje Automático
+* **Estudiante:** Juan Manuel Lopera Soto
+* **Docente:** Olga Lucía Quintero Montoya
 
 ---
-*Proyecto desarrollado para el curso de Fundamentos de Aprendizaje Automático.*
+
+## 🎯 Descripción del Proyecto
+
+Este proyecto aborda el fenómeno del **"Doomscrolling"** (consumo compulsivo de contenido digital) aplicando el ciclo de vida completo del Machine Learning. 
+
+El objetivo principal es predecir el impacto emocional en tiempo real de un usuario basándonos **exclusivamente en telemetría de comportamiento cinético** (velocidad de *scroll*, tiempo de uso, plataforma, interacciones), evitando depender de diagnósticos médicos previos o encuestas subjetivas para prevenir el *Data Leakage* (Fuga de Información).
+
+## 🗂️ El Dataset
+
+Se generó un dataset sintético de **2,500 registros** fundamentado en lógica de negocio y psicología del comportamiento digital:
+* **Variables Predictoras (X):** `Daily_Usage_Time_min`, `Scroll_Rate_ppm`, `Platform`, `Likes`, `Comments`, demografía.
+* **Variable Objetivo Original (y):** `Emotional_State_Post_Usage` (Ansioso, Feliz, Deprimido, Neutro, etc.).
+* **Reglas de Negocio:** Se integró un "Índice de Doomscrolling" oculto donde el alto consumo de tiempo combinado con un *Scroll Rate* acelerado degrada el índice de salud mental del usuario.
+
+---
+
+## ⚙️ Metodología y Pipeline de Machine Learning
+
+El proyecto se estructuró en 4 fases técnicas fundamentales:
+
+### 1. Ingeniería de Datos (Data Prep)
+* **Limpieza:** Imputación de valores nulos (media para numéricos, moda para categóricos) y filtrado de anomalías lógicas.
+* **Transformaciones:** Aplicación de Log-Transform para corregir sesgos en el tiempo de uso.
+* **Encoding & Scaling:** One-Hot Encoding para plataformas, Label Encoding para el target y normalización mediante `StandardScaler` (crucial para los algoritmos basados en distancias).
+
+### 2. Aprendizaje No Supervisado (Identificación de Clusters)
+Se le ocultaron las etiquetas originales a la IA para evaluar si el comportamiento formaba grupos naturales.
+* **K-Means:** Logró segmentar a los usuarios en perfiles de comportamiento compacto.
+* **DBSCAN:** Logró segmentar a los usuarios en clases mas diversas poco diferenciables para el resto de los modelos, los cuales a diferencia de DBSCAN tomaron un camino mas preciso diviendo el dataset en solo 3 clases, DBSCAN logro identificar clases menores que eran muy similares a las principales.
+* **Fuzzy C-Means:** Permitió evaluar probabilidades de pertenencia difusa, ideal para el espectro de la psicología humana.
+* **Clustering Jerárquico:** Generación de un **Dendrograma** para visualizar las distancias topológicas entre comportamientos sanos y compulsivos.
+
+### 3. Aprendizaje Supervisado (Modelos Predictivos)
+Se reintrodujeron las etiquetas para entrenar modelos de clasificación multiclase.
+* **Regresión Logística Multinomial:** Utilizada como modelo *Baseline* (Línea base).
+* **Árboles de Decisión:** Elegidos por su **interpretabilidad clínica** (modelos de caja blanca). 
+* **Feature Importance:** El análisis del árbol reveló que el `Scroll_Rate_ppm` es el principal predictor del estado emocional, superando a la plataforma en sí.
+
+### 4. El Experimento Final (Re-evaluación de Etiquetas)
+¿Qué es más predecible: las emociones reportadas por humanos o los grupos matemáticos encontrados por K-Means?
+* Se entrenaron modelos supervisados idénticos para predecir: a) La emoción original, b) El clúster de K-Means, c) El clúster Jerárquico.
+* **Conclusión:** El modelo predictivo alcanzó un *F1-Score* significativamente mayor al predecir las etiquetas generadas por K-Means/Jerárquico. Esto prueba que el comportamiento cinético forma agrupaciones mucho más puras y predecibles que las emociones auto-reportadas (que suelen contener ruido por la subjetividad humana).
+
+---
+
+## 🚀 Estructura del Repositorio y Ejecución
+
+El código está modularizado para evaluar cada fase del pipeline de forma independiente:
+
+```text
+├── main.py                  # Carga, limpieza, EDA, ingeniería de características y exportación
+├── unsupervised.py          # K-Means, DBSCAN y Análisis de Componentes Principales (PCA)
+├── unsupervised_2.py        # Fuzzy C-Means (skfuzzy) y Clustering Jerárquico (Dendrogramas)
+├── supervised.py            # Regresión Logística y Árboles de Decisión (Feature Importance)
+├── comparativa_final.py     # Experimento cruzado de métricas (Human labels vs Machine clusters)
+├── graficas_exportadas/     # Carpeta autogenerada con matrices de confusión, dendrogramas y EDA
+└── social_media_addiction_2500.csv # Dataset principal
