@@ -3,16 +3,22 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.preprocessing import StandardScaler, LabelEncoder
+import os
 
 # ESTILOS PARA LAS GRAFICAS
 
 sns.set(style="whitegrid")
 plt.rcParams['figure.figsize'] = (10, 6)
 
+# DIRECTORIO PARA LAS GRAFICAS
+carpeta_graficas = "graficas_exportadas"
+os.makedirs(carpeta_graficas, exist_ok=True)
+print(f"Las gráficas se guardarán en el directorio: '{carpeta_graficas}'")
+
 # CARGA DE DATOS
 
 try:
-    df = pd.read_csv('social_media_addiction.csv') # aqui definimos en donde esta nuestro archivo del dataset
+    df = pd.read_csv('../../data/social_media_addiction_2500.csv')
     print("Dataset cargado exitosamente.")
 except FileNotFoundError:
     print("Error: El archivo 'social_media_addiction.csv' no se encuentra.")
@@ -27,23 +33,23 @@ duplicados = df.duplicated().sum()
 print(f"\nFilas duplicadas eliminadas: {duplicados}")
 df = df.drop_duplicates()
 
-# Manejamos los valores nulos, los numericos los imputamos con la media, y los categoricos con la moda
+# Manejamos los valores nulos
 for col in df.columns:
-    if df[col].dtype == 'object':
-        df[col] = df[col].fillna(df[col].mode()[0])
-    else:
+    if pd.api.types.is_numeric_dtype(df[col]):
         df[col] = df[col].fillna(df[col].mean())
+    else:
+        df[col] = df[col].fillna(df[col].mode()[0])
 
-# limpiamos todas las categorias de texto, borramos los espacios y las ponemos en minuscula
-categorical_cols = df.select_dtypes(include=['object']).columns
+# Limpiamos todas las categorias de texto
+categorical_cols = df.select_dtypes(exclude=[np.number]).columns
 for col in categorical_cols:
-    df[col] = df[col].str.lower().str.strip()
+    df[col] = df[col].astype(str).str.lower().str.strip()
 
 # borramos la columna de ID, ya que no sirve para hacer predicciones
 if 'User_ID' in df.columns:
     df = df.drop(columns=['User_ID'])
 
-# hacemos una validacion logica para borrar tiempos imposibles (se dejo el celular encendido)
+# hacemos una validacion logica para borrar tiempos imposibles
 # o edades falsas (mayor a 100)
 df = df[(df['Daily_Usage_Time_min'] <= 1440) & (df['Age'] <= 100)]
 
@@ -76,13 +82,15 @@ sns.histplot(df['Daily_Usage_Time_min'], kde=True, bins=30, color='skyblue')
 plt.title('Distribución del Tiempo de Uso Diario (Antes de Log Transform)')
 plt.xlabel('Minutos')
 plt.ylabel('Frecuencia')
-plt.show()
+plt.savefig(os.path.join(carpeta_graficas, '1_distribucion_uso_diario.png')) # <-- Guardado
+plt.close() # <-- Cierre de figura
 
 plt.figure(figsize=(10, 5))
 sns.histplot(df['Age'], kde=True, bins=20, color='salmon')
 plt.title('Distribución de la Edad de los Usuarios')
 plt.xlabel('Edad')
-plt.show()
+plt.savefig(os.path.join(carpeta_graficas, '2_distribucion_edad.png')) # <-- Guardado
+plt.close() # <-- Cierre de figura
 
 # Gráficos de Dispersión
 # Relación entre Scroll Rate y Tiempo de Uso, coloreado por Plataforma
@@ -93,13 +101,15 @@ plt.xlabel('Scroll Rate (ppm)')
 plt.ylabel('Tiempo Diario (min)')
 plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
 plt.tight_layout()
-plt.show()
+plt.savefig(os.path.join(carpeta_graficas, '3_scatter_scroll_uso.png')) # <-- Guardado
+plt.close() # <-- Cierre de figura
 
 # Relación entre Likes Recibidos y Comentarios
 plt.figure(figsize=(10, 6))
 sns.scatterplot(data=df, x='Likes_Received_Daily', y='Comments_Received_Daily', color='purple', alpha=0.5)
 plt.title('Interacción: Likes vs Comentarios')
-plt.show()
+plt.savefig(os.path.join(carpeta_graficas, '4_scatter_likes_comentarios.png')) # <-- Guardado
+plt.close() # <-- Cierre de figura
 
 # INGENIERÍA DE CARACTERÍSTICAS Y TRANSFORMACIONES
 
@@ -113,7 +123,8 @@ df['Log_Usage_Time'] = np.log1p(df['Daily_Usage_Time_min'])
 plt.figure(figsize=(10, 5))
 sns.histplot(df['Log_Usage_Time'], kde=True, color='green')
 plt.title('Distribución del Tiempo de Uso (Log Transformada)')
-plt.show()
+plt.savefig(os.path.join(carpeta_graficas, '5_distribucion_uso_log.png')) # <-- Guardado
+plt.close() # <-- Cierre de figura
 
 # Matriz de Correlación entre las variables numericas
 numeric_df = df.select_dtypes(include=[np.number])
@@ -122,7 +133,8 @@ corr_matrix = numeric_df.corr()
 plt.figure(figsize=(12, 10))
 sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt=".2f", linewidths=0.5)
 plt.title('Matriz de Correlación de Variables')
-plt.show()
+plt.savefig(os.path.join(carpeta_graficas, '6_matriz_correlacion.png')) # <-- Guardado
+plt.close() # <-- Cierre de figura
 
 # Decisión de eliminación basada en correlación, ya que si dos columnas tienen una correlacion
 # elevada, podemos borrar una de ellas
@@ -166,3 +178,8 @@ df_final = df.drop(columns=[c for c in cols_to_drop if c in df.columns], errors=
 print("\n--- PIPELINE FINALIZADO ---")
 print("Dimensiones del dataset final:", df_final.shape)
 print(df_final.head())
+
+# EXPORTAR EL DATASET PROCESADO
+ruta_exportacion = os.path.join(carpeta_graficas, 'dataset_procesado_final.csv')
+df_final.to_csv(ruta_exportacion, index=False)
+print(f"\n✅ Dataset procesado guardado en: {ruta_exportacion}")
